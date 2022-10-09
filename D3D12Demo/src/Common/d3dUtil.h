@@ -1,6 +1,6 @@
 ﻿#pragma once
 
-#include <Windows.h>
+#include <windows.h>
 #include <wrl.h>
 #include <dxgi1_4.h>
 #include <d3d12.h>
@@ -19,7 +19,10 @@
 #include <fstream>
 #include <sstream>
 #include <cassert>
+#include "d3dx12.h"
+//#include "DDSTextureLoader.h"
 #include "MathHelper.h"
+
 
 extern const int gNumFrameResources;
 
@@ -47,7 +50,7 @@ inline void d3dSetDebugName(ID3D12DeviceChild* obj, const char* name)
 	}
 }
 
-inline std::wstring AnsiToString(const std::string& str)
+inline std::wstring AnsiToWString(const std::string& str)
 {
 	// WCHAR = t_wchar (unsigned short) 2바이트를 사용하므로 char보다 더 많은 문자를 담는다.
 	WCHAR buffer[512]; 
