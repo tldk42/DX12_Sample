@@ -128,10 +128,10 @@ protected:
 	UINT mDsvDescriptorSize = 0;
 	UINT mCbvSrvDescriptorSize = 0;
 
-	std::wstring mMainWndCaption = L"Base d3d App";
+	std::wstring mMainWndCaption = L"Sample RenderApp";
 	D3D_DRIVER_TYPE md3dDriverType = D3D_DRIVER_TYPE_HARDWARE;
 	DXGI_FORMAT mBackBufferFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
 	DXGI_FORMAT mDepthStencilFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	int mClientWidth = 1024;
-	int mClientHeight = 960;
+	int mClientWidth = 1600;
+	int mClientHeight = 900;
 };

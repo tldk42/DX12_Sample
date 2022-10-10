@@ -27,7 +27,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance, PSTR cmdLine, in
 		if (!theApp.Initialize())
 			return 0;
 
-		return 0;
+		return theApp.Run();
 	}
 	catch (DxException& e)
 	{
@@ -60,6 +60,7 @@ void SampleApp::OnResize()
 
 void SampleApp::Update(const GameTimer& gt)
 {
+
 }
 
 void SampleApp::Draw(const GameTimer& gt)
@@ -73,36 +74,29 @@ void SampleApp::Draw(const GameTimer& gt)
 	ThrowIfFailed(mCommandList->Reset(mDirectCmdListAlloc.Get(), nullptr));
 
 	// Indicate a state transition on the resource usage.
-	CD3DX12_RESOURCE_BARRIER rb;
-	rb.Transition(CurrentBackBuffer(),
-	              D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET);
-	mCommandList->ResourceBarrier(1, &rb);
+	mCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(),
+		D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
 
 	// Set the viewport and scissor rect.  This needs to be reset whenever the command list is reset.
 	mCommandList->RSSetViewports(1, &mScreenViewport);
 	mCommandList->RSSetScissorRects(1, &mScissorRect);
 
 	// Clear the back buffer and depth buffer.
-	mCommandList->ClearRenderTargetView(CurrentBackBufferView(), DirectX::Colors::LightSteelBlue, 0, nullptr);
-	mCommandList->ClearDepthStencilView(DepthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0,
-	                                    0, nullptr);
+	mCommandList->ClearRenderTargetView(CurrentBackBufferView(), DirectX::Colors::Gray, 0, nullptr);
+	mCommandList->ClearDepthStencilView(DepthStencilView(), D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
 
 	// Specify the buffers we are going to render to.
-	auto bbv = CurrentBackBufferView();
-	auto dsv = DepthStencilView();
-	mCommandList->OMSetRenderTargets(1, &bbv, true, &dsv);
+	mCommandList->OMSetRenderTargets(1, &CurrentBackBufferView(), true, &DepthStencilView());
 
 	// Indicate a state transition on the resource usage.
-	CD3DX12_RESOURCE_BARRIER rb2;
-	rb2.Transition(CurrentBackBuffer(),
-	               D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
-	mCommandList->ResourceBarrier(1, &rb2);
+	mCommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(),
+		D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT));
 
 	// Done recording commands.
 	ThrowIfFailed(mCommandList->Close());
 
 	// Add the command list to the queue for execution.
-	ID3D12CommandList* cmdsLists[] = {mCommandList.Get()};
+	ID3D12CommandList* cmdsLists[] = { mCommandList.Get() };
 	mCommandQueue->ExecuteCommandLists(_countof(cmdsLists), cmdsLists);
 
 	// swap the back and front buffers
